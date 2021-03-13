@@ -40,11 +40,10 @@ app.get('/api/v1/:username', async (req, res) => {
         })
 
     } catch (err) {
-        res.status(400).json({
+        res.status(404).json({
             success: false,
             data: 'User Not Found'
         })
-        console.error(err)
     }
 })
 
@@ -67,7 +66,7 @@ app.get('/api/v1/:username/tweets', async (req, res) => {
         })
 
         res.status(200).json({
-           Success: true,
+           success: true,
            Tweets: data.length,
           Data : data,
           Meta: meta
@@ -76,8 +75,12 @@ app.get('/api/v1/:username/tweets', async (req, res) => {
      
 
     } catch (err) {
-        console.error(err)
+        res.status(404).json({
+            success: false,
+            data: 'User Not Found'
+        })
     }
+    
 })
 
 
@@ -89,7 +92,7 @@ app.get('/api/v1/:username/tweets/1', async (req, res) => {
         //*v1 api syntax
         const query = await twit.get('users/show', {  screen_name: req.params.username,})
         const { id_str } =  query.data
- 
+        
         //*v2 api syntax
         const { data , meta } = await client.get(`users/${id_str}/tweets`,{ 
             max_results: 10,
@@ -98,7 +101,7 @@ app.get('/api/v1/:username/tweets/1', async (req, res) => {
         })
 
         res.status(200).json({
-            Success: true,
+            success: true,
             Tweets: data.length,
            Data : data,
            Meta: meta
@@ -107,8 +110,12 @@ app.get('/api/v1/:username/tweets/1', async (req, res) => {
      
 
     } catch (err) {
-        console.error(err)
+        res.status(404).json({
+            success: false,
+            data: 'User Not Found'
+        })
     }
+    
 })
 
 app.get('/api/v1/:username/tweets/2', async (req, res) => {
@@ -126,15 +133,19 @@ app.get('/api/v1/:username/tweets/2', async (req, res) => {
         });
 
         res.status(200).json({
-            Success: true,
+            success: true,
             Tweets: data.length,
            Data : data,
            Meta: meta
          })
 
     } catch (err) {
-        console.error(err)
+        res.status(404).json({
+            success: false,
+            data: 'User Not Found'
+        })
     }
+    
 })
 
 app.get('/api/v1/:username/tweets/3', async (req, res) => {
@@ -153,17 +164,28 @@ app.get('/api/v1/:username/tweets/3', async (req, res) => {
 
       
         res.status(200).json({
-            Success: true,
+            success: true,
             Tweets: data.length,
            Data : data,
            Meta: meta
          })
 
     } catch (err) {
-        console.error(err)
+        res.status(404).json({
+            success: false,
+            data: 'User Not Found'
+        })
     }
+    
 })
 
+    // ** 404 not found page
+   app.all('*', (req, res, next) => {
+    res.status(404).json({
+        success: false,
+        data: 'error page'
+    })
+   })
 
 app.listen(port, async function () {
     try {
@@ -172,3 +194,5 @@ app.listen(port, async function () {
         console.log(err)
     }
 });
+
+module.exports = app; // for testing
