@@ -4,14 +4,6 @@ const express = require('express');
 const app = express();
 const port = 9000;
 
-//*for version 1.1 API
-const Twit = require('twit')
-const twit = new Twit({
-    consumer_key: process.env.API_KEY,
-    consumer_secret: process.env.API_KEY_SECRET,
-    access_token: process.env.ACCESS_TOKEN,
-    access_token_secret: process.env.ACCESS_TOKEN_SECRET,
-})
 
 //*for version 2.0 API
 const Twitter = require('twitter-v2');
@@ -24,17 +16,18 @@ const client = new Twitter({
 
 
 
+
 //* @desc  check profile user
 //* @route GET /api/v1/:username
 //* @access  Public
 app.get('/api/v1/:username', async (req, res) => {
     try {
 
-        const query = await twit.get('users/show', { screen_name: req.params.username,})
+        const { data } = await client.get(`users/by/username/${req.params.username}`)
 
         res.status(200).json({
             success: true,
-            data: query.data
+            data: data
         })
 
     } catch (err) {
@@ -42,7 +35,9 @@ app.get('/api/v1/:username', async (req, res) => {
             success: false,
             data: 'User Not Found'
         })
+        console.log(err)
     }
+ 
 })
 
 
@@ -52,17 +47,15 @@ app.get('/api/v1/:username', async (req, res) => {
 app.get('/api/v1/:username/tweets', async (req, res) => {
     try {
         
-        //*v1 api syntax
-        const query = await twit.get('users/show', {  screen_name: req.params.username,})
-        const { id_str } =  query.data
- 
-        //*v2 api syntax
-        const { data , meta } = await client.get(`users/${id_str}/tweets`,{ 
+        const find = await client.get(`users/by/username/${req.params.username}`)
+    
+        const { data , meta } = await client.get(`users/${find.data.id}/tweets`,{ 
             max_results: 100,
             start_time:'2019-01-01T17:00:00Z',
             end_time:'2021-03-10T01:00:00Z',
         })
 
+     
         res.status(200).json({
            success: true,
            Tweets: data.length,
@@ -87,12 +80,11 @@ app.get('/api/v1/:username/tweets', async (req, res) => {
 //* @access  Public
 app.get('/api/v1/:username/tweets/1', async (req, res) => {
     try {
-        //*v1 api syntax
-        const query = await twit.get('users/show', {  screen_name: req.params.username,})
-        const { id_str } =  query.data
+
+        const find = await client.get(`users/by/username/${req.params.username}`)
         
         //*v2 api syntax
-        const { data , meta } = await client.get(`users/${id_str}/tweets`,{ 
+        const { data , meta } = await client.get(`users/${find.data.id}/tweets`,{ 
             max_results: 10,
             start_time:'2019-01-01T17:00:00Z',
             end_time:'2021-03-10T01:00:00Z',
@@ -118,12 +110,12 @@ app.get('/api/v1/:username/tweets/1', async (req, res) => {
 
 app.get('/api/v1/:username/tweets/2', async (req, res) => {
     try {
-        //*v1 api syntax
-        const query = await twit.get('users/show', { screen_name: req.params.username,})
-        const { id_str } =  query.data
+       
+
+        const find = await client.get(`users/by/username/${req.params.username}`)
 
         //*v2 api syntax
-        const { data , meta } = await client.get(`users/${id_str}/tweets`, { 
+        const { data , meta } = await client.get(`users/${find.data.id}/tweets`, { 
             max_results: 10,
             start_time:'2019-01-01T17:00:00Z',
             end_time:'2020-12-12T01:00:00Z',
@@ -148,12 +140,11 @@ app.get('/api/v1/:username/tweets/2', async (req, res) => {
 
 app.get('/api/v1/:username/tweets/3', async (req, res) => {
     try {
-        //*v1 api syntax
-        const query = await twit.get('users/show',  {  screen_name: req.params.username,})
-        const { id_str } =  query.data
+
+        const find = await client.get(`users/by/username/${req.params.username}`)
 
         //*v2 api syntax
-        const { data , meta } = await client.get(`users/${id_str}/tweets`, { 
+        const { data , meta } = await client.get(`users/${find.data.id}/tweets`, { 
             max_results: 10,
             start_time:'2019-01-01T17:00:00Z',
             end_time:'2020-12-12T01:00:00Z',
