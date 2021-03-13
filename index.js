@@ -13,8 +13,6 @@ const twit = new Twit({
     consumer_secret: process.env.API_KEY_SECRET,
     access_token: process.env.ACCESS_TOKEN,
     access_token_secret: process.env.ACCESS_TOKEN_SECRET,
-    timeout_ms: 60 * 1000, // optional HTTP request timeout to apply to all requests.
-    strictSSL: true, // optional - requires SSL certificates to be valid.
 })
 
 //*for version 2.0 API
@@ -27,61 +25,100 @@ const client = new Twitter({
 });
 
 
-//* username twitter
-
-const USER_NAME = 'damarowen'
 
 //* @desc  check profile user
-//* @route GET /api/v1/profile
+//* @route GET /api/v1/:username
 //* @access  Public
-app.get('/api/v1/profile', async (req, res) => {
+app.get('/api/v1/:username', async (req, res) => {
     try {
 
-     const query = await twit.get('users/show', { screen_name: `${USER_NAME}`,})
+        const query = await twit.get('users/show', { screen_name: req.params.username,})
 
         res.status(200).json({
+            success: true,
             data: query.data
         })
 
     } catch (err) {
+        res.status(400).json({
+            success: false,
+            data: 'User Not Found'
+        })
         console.error(err)
     }
 })
 
-//* @desc  show tweets from user with pagination
-//* @route GET /api/v1/profile/:page
+
+//* @desc  show 100 tweets from user
+//* @route GET /api/v1/:username/tweets
 //* @access  Public
-app.get('/api/v1/tweets/1', async (req, res) => {
+app.get('/api/v1/:username/tweets', async (req, res) => {
     try {
+        
         //*v1 api syntax
-        const query = await twit.get('users/show', { screen_name: `${USER_NAME}`,})
-        const { id } =  query.data
-   console.log(id)
+        const query = await twit.get('users/show', {  screen_name: req.params.username,})
+        const { id_str } =  query.data
+ 
         //*v2 api syntax
-        const { data , meta } = await client.get(`users/${id}/tweets`, { 
-            max_results: 10,
+        const { data , meta } = await client.get(`users/${id_str}/tweets`,{ 
+            max_results: 100,
             start_time:'2019-01-01T17:00:00Z',
-            end_time:'2020-12-12T01:00:00Z'
-        });
+            end_time:'2021-03-10T01:00:00Z',
+        })
 
         res.status(200).json({
-          data : data,
-          meta: meta
+           Success: true,
+           Tweets: data.length,
+          Data : data,
+          Meta: meta
         })
+
+     
 
     } catch (err) {
         console.error(err)
     }
 })
 
-app.get('/api/v1/tweets/2', async (req, res) => {
+
+//* @desc  show tweets from user with pagination
+//* @route GET /api/v1/:username/tweets/:page
+//* @access  Public
+app.get('/api/v1/:username/tweets/1', async (req, res) => {
     try {
         //*v1 api syntax
-        const query = await twit.get('users/show', { screen_name: `${USER_NAME}`,})
-        const { id} =  query.data
+        const query = await twit.get('users/show', {  screen_name: req.params.username,})
+        const { id_str } =  query.data
+ 
+        //*v2 api syntax
+        const { data , meta } = await client.get(`users/${id_str}/tweets`,{ 
+            max_results: 10,
+            start_time:'2019-01-01T17:00:00Z',
+            end_time:'2021-03-10T01:00:00Z',
+        })
+
+        res.status(200).json({
+            Success: true,
+            Tweets: data.length,
+           Data : data,
+           Meta: meta
+         })
+
+     
+
+    } catch (err) {
+        console.error(err)
+    }
+})
+
+app.get('/api/v1/:username/tweets/2', async (req, res) => {
+    try {
+        //*v1 api syntax
+        const query = await twit.get('users/show', { screen_name: req.params.username,})
+        const { id_str } =  query.data
 
         //*v2 api syntax
-        const { data , meta } = await client.get(`users/${id}/tweets`, { 
+        const { data , meta } = await client.get(`users/${id_str}/tweets`, { 
             max_results: 10,
             start_time:'2019-01-01T17:00:00Z',
             end_time:'2020-12-12T01:00:00Z',
@@ -89,33 +126,38 @@ app.get('/api/v1/tweets/2', async (req, res) => {
         });
 
         res.status(200).json({
-          data : data,
-          meta: meta
-        })
+            Success: true,
+            Tweets: data.length,
+           Data : data,
+           Meta: meta
+         })
 
     } catch (err) {
         console.error(err)
     }
 })
 
-app.get('/api/v1/tweets/3', async (req, res) => {
+app.get('/api/v1/:username/tweets/3', async (req, res) => {
     try {
         //*v1 api syntax
-        const query = await twit.get('users/show',  { screen_name: `${USER_NAME}`,})
-        const { id} =  query.data
+        const query = await twit.get('users/show',  {  screen_name: req.params.username,})
+        const { id_str } =  query.data
 
         //*v2 api syntax
-        const { data , meta } = await client.get(`users/${id}/tweets`, { 
+        const { data , meta } = await client.get(`users/${id_str}/tweets`, { 
             max_results: 10,
             start_time:'2019-01-01T17:00:00Z',
             end_time:'2020-12-12T01:00:00Z',
             pagination_token: '7140dibdnow9c7btw3t4651fq8wcn4681eez8xjw74182'
         });
 
+      
         res.status(200).json({
-          data : data,
-          meta: meta
-        })
+            Success: true,
+            Tweets: data.length,
+           Data : data,
+           Meta: meta
+         })
 
     } catch (err) {
         console.error(err)
