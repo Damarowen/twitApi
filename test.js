@@ -14,7 +14,7 @@ describe('Tweets', () => {
      * Test the /GET api/v1/:username/
      */
     describe('/GET username not found', () => {
-        it('it should GET profile page from that username', (done) => {
+        it('it should GET error from that username', (done) => {
             chai.request(server)
                 .get(`/api/v1/zzz`)
                 .end((err, res) => {
