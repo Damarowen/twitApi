@@ -16,7 +16,7 @@ describe('Tweets', () => {
     describe('/GET username not found', () => {
         it('it should GET error from that username', (done) => {
             chai.request(server)
-                .get(`/api/v1/zzz`)
+                .get(`/api/v1/asfagasgasgasgasgsag`)
                 .end((err, res) => {
                     res.should.have.status(404);
                     res.body.success.should.be.eql(false)
