@@ -1,3 +1,5 @@
+:heart::heart::heart::heart::heart:
+
 # TwitApi
 
 
@@ -65,3 +67,5 @@ http://localhost:9000/api/v1/{USERNAME}
 The pagination page is not dynamic, user still use route 1,2 or 3 to have pagination ( hufftt :disappointed_relieved: :disappointed_relieved: :disappointed_relieved: )
 
 In the next future updates, i will make pagination to dynamic with :page paramas
+
+:heart::heart::heart:
